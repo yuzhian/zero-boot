@@ -1,0 +1,27 @@
+${AnsiColor.CYAN}
+          ┌─┐       ┌─┐
+       ┌──┘ ┴───────┘ ┴──┐
+       │                 │
+       │       ───       │
+       │  ─┬┘       └┬─  │
+       │                 │
+       │       ─┴─       │
+       │                 │
+       └───┐         ┌───┘
+           │         │
+           │         │
+           │         │
+           │         └──────────────┐
+           │                        │
+           │                        ├─┐
+           │                        ┌─┘
+           │                        │
+           └─┐  ┐  ┌───────┬──┐  ┌──┘
+             │ ─┤ ─┤       │ ─┤ ─┤
+             └──┴──┘       └──┴──┘
+                 神兽保佑
+                 永无BUG!
+
+Spring Boot Version: ${spring-boot.version}${spring-boot.formatted-version}
+Application Version: ${application.version}${application.formatted-version}
+${AnsiColor.BLACK}
