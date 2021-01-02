@@ -1,10 +1,10 @@
-package com.github.yuzhian.zero.boot;
+package com.github.yuzhian.zero.boot.support;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class ZeroBootApplicationTests {
+class ZeroBootSupportApplicationTests {
 
     @Test
     void contextLoads() {
