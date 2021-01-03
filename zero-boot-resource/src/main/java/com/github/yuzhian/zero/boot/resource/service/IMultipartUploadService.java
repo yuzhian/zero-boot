@@ -17,11 +17,11 @@ public interface IMultipartUploadService {
      *
      * @param uploadId 上传标记符
      * @param part     分片号
-     * @param file     分片文件
+     * @param partFile 分片文件
      * @param hash     分片hash
      * @return etag
      */
-    String uploadPart(String uploadId, Integer part, MultipartFile file, String hash);
+    String uploadPart(String uploadId, Integer part, MultipartFile partFile, String hash);
 
     /**
      * 合并文件

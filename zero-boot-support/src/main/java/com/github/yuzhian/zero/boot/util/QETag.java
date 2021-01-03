@@ -6,6 +6,9 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 
+/**
+ * [七牛QETag](https://github.com/qiniu/qetag)
+ */
 public class QETag {
     private static final int CHUNK_SIZE = 1 << 22;
 
@@ -21,7 +24,6 @@ public class QETag {
     public String calcETag(InputStream inputStream, long size) {
         String etag = "";
         try (inputStream) {
-
             if (size <= CHUNK_SIZE) {
                 byte[] fileData = new byte[(int) size];
                 //noinspection ResultOfMethodCallIgnored
@@ -44,18 +46,14 @@ public class QETag {
                     byte[] bytesRead = new byte[bytesReadLen];
                     System.arraycopy(chunkData, 0, bytesRead, 0, bytesReadLen);
                     byte[] chunkDataSha1 = sha1(bytesRead);
-                    byte[] newAllSha1Data = new byte[chunkDataSha1.length
-                            + allSha1Data.length];
-                    System.arraycopy(allSha1Data, 0, newAllSha1Data, 0,
-                            allSha1Data.length);
-                    System.arraycopy(chunkDataSha1, 0, newAllSha1Data,
-                            allSha1Data.length, chunkDataSha1.length);
+                    byte[] newAllSha1Data = new byte[chunkDataSha1.length + allSha1Data.length];
+                    System.arraycopy(allSha1Data, 0, newAllSha1Data, 0, allSha1Data.length);
+                    System.arraycopy(chunkDataSha1, 0, newAllSha1Data, allSha1Data.length, chunkDataSha1.length);
                     allSha1Data = newAllSha1Data;
                 }
                 byte[] allSha1DataSha1 = sha1(allSha1Data);
                 byte[] hashData = new byte[allSha1DataSha1.length + 1];
-                System.arraycopy(allSha1DataSha1, 0, hashData, 1,
-                        allSha1DataSha1.length);
+                System.arraycopy(allSha1DataSha1, 0, hashData, 1, allSha1DataSha1.length);
                 hashData[0] = (byte) 0x96;
                 etag = urlSafeBase64Encode(hashData);
             }

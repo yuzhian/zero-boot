@@ -30,10 +30,12 @@ public class UploadController {
     @PatchMapping(value = {"/part/{uploadId}/{part}"})
     @ApiImplicitParams({
             @ApiImplicitParam(name = "uploadId", value = "上传操作标记", required = true, paramType = "path", dataType = "java.lang.String"),
-            @ApiImplicitParam(name = "part", value = "分片序号", required = true, paramType = "path", dataType = "java.lang.Integer"),
+            @ApiImplicitParam(name = "part", value = "分片序号(1-999)", required = true, paramType = "path", dataType = "java.lang.Integer"),
+            @ApiImplicitParam(name = "partFile", value = "分片文件", required = true, paramType = "form", dataType = "org.springframework.web.multipart.MultipartFile"),
+            @ApiImplicitParam(name = "hash", value = "分片hash", required = true, paramType = "form", dataType = "java.lang.String"),
     })
-    public ResponseEntity<Void> uploadPart(@PathVariable String uploadId, @PathVariable Integer part, MultipartFile file, @RequestParam(required = false) String hash) {
-        String etag = multipartUploadService.uploadPart(uploadId, part, file, hash);
+    public ResponseEntity<Void> uploadPart(@PathVariable String uploadId, @PathVariable Integer part, MultipartFile partFile, @RequestParam(required = false) String hash) {
+        String etag = multipartUploadService.uploadPart(uploadId, part, partFile, hash);
         return ResponseEntity.ok().eTag(etag).build();
     }
 

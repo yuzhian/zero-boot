@@ -3,9 +3,11 @@ package com.github.yuzhian.zero.boot.resource.service.impl;
 import com.github.yuzhian.zero.boot.properties.ResourceProperties;
 import com.github.yuzhian.zero.boot.resource.service.IMultipartUploadService;
 import com.github.yuzhian.zero.boot.support.ApiException;
-import com.github.yuzhian.zero.boot.util.QETag;
+import com.github.yuzhian.zero.boot.util.DigestUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import org.apache.logging.log4j.util.Strings;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -36,44 +38,48 @@ public class MultipartUploadService implements IMultipartUploadService {
     public String createMultipartUpload() {
         String uploadId = UUID.randomUUID().toString().replaceAll("-", "");
         File dir = new File(resourceProperties.getLocation().getParts(), uploadId);
-        System.out.println(dir.getAbsolutePath());
         if (dir.exists()) {
             return createMultipartUpload();
         } else if (dir.mkdir()) {
             return uploadId;
         }
-        throw new ApiException("PART_TASK_CREATE_FAILED", "分片任务创建失败");
+        throw new ApiException("UPLOAD_INIT_FAILED", "分片上传初始化失败");
     }
 
     @Override
     @SneakyThrows({IOException.class})
-    public String uploadPart(String uploadId, Integer part, MultipartFile file, String hash) {
+    public String uploadPart(String uploadId, Integer part, MultipartFile partFile, String clientHash) {
         File dir = new File(resourceProperties.getLocation().getParts(), uploadId);
         if (!dir.exists()) {
-            throw new ApiException("PART_NOT_INIT", "未初始化此分片");
+            throw new ApiException(HttpStatus.BAD_REQUEST, "UPLOAD_NOT_INIT", "未初始化此分片上传操作");
         }
-        Files.write(Path.of(resourceProperties.getLocation().getParts(), uploadId, String.valueOf(part)),
-                file.getBytes(), StandardOpenOption.CREATE);
-        return new QETag().calcETag(file.getInputStream(), file.getSize());
+        String serverHash = DigestUtils.hex(partFile.getInputStream(), "SHA-256");
+        if (Strings.isNotBlank(clientHash) && !serverHash.equals(clientHash)) {
+            throw new ApiException(HttpStatus.CONFLICT, "HASH_VERIFICATION_FAILED", "哈希校验失败, 请确保使用的方式是SHA-256");
+        }
+        Files.write(Path.of(resourceProperties.getLocation().getParts(), uploadId, String.valueOf(part)), partFile.getBytes(), StandardOpenOption.CREATE);
+        return serverHash;
     }
 
+    // TODO
+    //  1. 4GB耗时70S
+    //  2. 过期上传
     @Override
     @SuppressWarnings("ResultOfMethodCallIgnored")
     @SneakyThrows({IOException.class, NoSuchAlgorithmException.class})
     public String complete(String uploadId) {
         MessageDigest digest = MessageDigest.getInstance("SHA-256");
+        File parts = new File(resourceProperties.getLocation().getParts(), uploadId); // 分片目录
+        File merge = new File(resourceProperties.getLocation().getMerge(), uploadId);
         // 输出文件
-        File target = Path.of(resourceProperties.getLocation().getMerge(), uploadId).toFile();
-        try (FileChannel targetChannel = new FileOutputStream(target, true).getChannel()) {
-            File dir = new File(resourceProperties.getLocation().getParts(), uploadId);
-            byte[] buffer = new byte[1024 * 8];
+        try (FileChannel targetChannel = new FileOutputStream(merge, true).getChannel()) {
+            byte[] buffer = new byte[1 << 22];
 
             // 遍历分片, 计算hash, 合并数据, 删除分片
-            Files.walk(dir.toPath()).filter(path -> path.toFile().isFile()).sorted(Comparator.comparing(p -> Integer.valueOf(p.toFile().getName()))).forEach(part -> {
+            Files.walk(parts.toPath()).filter(path -> path.toFile().isFile()).sorted(Comparator.comparing(p -> Integer.valueOf(p.toFile().getName()))).forEach(part -> {
                 File source = part.toFile();
-                try (FileInputStream fis = new FileInputStream(source);
-                     FileChannel sourceChannel = fis.getChannel();
-                     DigestInputStream dis = new DigestInputStream(fis, digest)) {
+                try (FileChannel sourceChannel = new FileInputStream(source).getChannel(); // !使用两个独立的输入流
+                     DigestInputStream dis = new DigestInputStream(new FileInputStream(source), digest)) {
                     for (; ; ) {
                         if (dis.read(buffer) == -1) break;
                     }
@@ -83,15 +89,16 @@ public class MultipartUploadService implements IMultipartUploadService {
                     source.delete();
                 }
             });
-            dir.delete();
+            parts.delete();
         }
 
         // 计算文件hash, 检查重复, 重命名文件
         String sha256 = new BigInteger(1, digest.digest()).toString(16);
-        if (new File(resourceProperties.getLocation().getStore(), sha256).exists()) {
-            new File(resourceProperties.getLocation().getMerge(), uploadId).delete();
+        File store = new File(resourceProperties.getLocation().getStore(), sha256);
+        if (store.exists()) {
+            merge.delete();
         } else {
-            new File(resourceProperties.getLocation().getMerge(), uploadId).renameTo(new File(resourceProperties.getLocation().getStore(), sha256));
+            merge.renameTo(store);
         }
         return sha256;
     }
