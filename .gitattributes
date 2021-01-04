@@ -1,0 +1,1 @@
+zero-boot-application/src/main/resources/application-dev.properties filter=masking_properties

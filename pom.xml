@@ -21,11 +21,13 @@
         <module>zero-boot-framework</module>
         <module>zero-boot-system</module>
         <module>zero-boot-resource</module>
+        <module>zero-boot-message</module>
     </modules>
 
     <properties>
         <java.version>11</java.version>
         <druid.version>1.2.1</druid.version>
+        <aliyun.sms.version>1.0.0</aliyun.sms.version>
         <springfox.version>3.0.0</springfox.version>
         <spring-security-cas.version>5.4.1</spring-security-cas.version>
     </properties>
@@ -36,6 +38,11 @@
                 <groupId>com.alibaba</groupId>
                 <artifactId>druid-spring-boot-starter</artifactId>
                 <version>${druid.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.alibaba.cloud</groupId>
+                <artifactId>aliyun-sms-spring-boot-starter</artifactId>
+                <version>${aliyun.sms.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.springfox</groupId>

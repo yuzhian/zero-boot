@@ -21,6 +21,11 @@
             <artifactId>zero-boot-resource</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.github.yuzhian</groupId>
+            <artifactId>zero-boot-message</artifactId>
+            <version>${project.version}</version>
+        </dependency>
     </dependencies>
 
     <build>
