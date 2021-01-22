@@ -26,6 +26,11 @@
             <artifactId>zero-boot-message</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.github.yuzhian</groupId>
+            <artifactId>zero-boot-chat</artifactId>
+            <version>${project.version}</version>
+        </dependency>
     </dependencies>
 
     <build>

@@ -11,10 +11,20 @@ import org.springframework.stereotype.Component;
 @Getter
 @Setter
 @Component
-@ConfigurationProperties(prefix = "zero.access")
-public class AccessProperties {
+@ConfigurationProperties(prefix = "zero.chat")
+public class ChatProperties {
     /**
-     * 访问令牌(请求头中携带用于验证帐号信息)
+     * 端口号
      */
-    private String authorization = "X-Auth-Token";
+    private Integer port;
+
+    /**
+     * 服务路径
+     */
+    private String websocketPath = "/";
+
+    /**
+     * 最大不活动时长
+     */
+    private Integer maxInactive = 30;
 }

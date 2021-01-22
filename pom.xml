@@ -22,6 +22,7 @@
         <module>zero-boot-system</module>
         <module>zero-boot-resource</module>
         <module>zero-boot-message</module>
+        <module>zero-boot-chat</module>
     </modules>
 
     <properties>
