@@ -1,9 +1,8 @@
 package com.github.yuzhian.zero.boot.framework.configure.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.yuzhian.zero.boot.properties.AccessProperties;
+import com.github.yuzhian.zero.boot.properties.SecurityProperties;
 import lombok.RequiredArgsConstructor;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.BeanClassLoaderAware;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,7 +22,7 @@ import org.springframework.session.web.http.HttpSessionIdResolver;
 @Configuration
 @RequiredArgsConstructor
 public class SessionConfiguration implements BeanClassLoaderAware {
-    private final AccessProperties accessProperties;
+    private final SecurityProperties securityProperties;
     private ClassLoader loader;
 
     @Bean
@@ -33,7 +32,7 @@ public class SessionConfiguration implements BeanClassLoaderAware {
 
     @Bean
     public HttpSessionIdResolver httpSessionIdResolver() {
-        return new HeaderHttpSessionIdResolver(accessProperties.getAuthorization());
+        return new HeaderHttpSessionIdResolver(securityProperties.getName());
     }
 
     @Bean
@@ -49,7 +48,7 @@ public class SessionConfiguration implements BeanClassLoaderAware {
     }
 
     @Override
-    public void setBeanClassLoader(@NotNull ClassLoader classLoader) {
+    public void setBeanClassLoader(ClassLoader classLoader) {
         this.loader = classLoader;
     }
 }

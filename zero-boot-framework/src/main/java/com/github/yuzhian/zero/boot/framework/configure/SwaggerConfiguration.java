@@ -1,7 +1,7 @@
 package com.github.yuzhian.zero.boot.framework.configure;
 
-import com.github.yuzhian.zero.boot.properties.AccessProperties;
 import com.github.yuzhian.zero.boot.properties.ApiProperties;
+import com.github.yuzhian.zero.boot.properties.SecurityProperties;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -9,12 +9,10 @@ import org.springframework.context.annotation.Configuration;
 import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
-import springfox.documentation.builders.RequestParameterBuilder;
 import springfox.documentation.oas.annotations.EnableOpenApi;
-import springfox.documentation.service.ApiInfo;
-import springfox.documentation.service.Contact;
-import springfox.documentation.service.RequestParameter;
+import springfox.documentation.service.*;
 import springfox.documentation.spi.DocumentationType;
+import springfox.documentation.spi.service.contexts.SecurityContext;
 import springfox.documentation.spring.web.plugins.Docket;
 
 import java.util.Collections;
@@ -27,19 +25,19 @@ import java.util.Collections;
 @RequiredArgsConstructor
 public class SwaggerConfiguration {
     private final ApiProperties apiProperties;
-    private final AccessProperties accessProperties;
+    private final SecurityProperties securityProperties;
 
     @Bean
     public Docket docket() {
         return new Docket(DocumentationType.OAS_30)
                 .apiInfo(apiInfo())
-                .globalRequestParameters(Collections.singletonList(authorizationHeader()))
                 .select()
                 .apis(RequestHandlerSelectors.withMethodAnnotation(ApiOperation.class))
                 .paths(PathSelectors.any())
-                .build();
+                .build()
+                .securitySchemes(Collections.singletonList(apiKey()))
+                .securityContexts(Collections.singletonList(securityContext()));
     }
-
 
     private ApiInfo apiInfo() {
         return new ApiInfoBuilder()
@@ -50,12 +48,18 @@ public class SwaggerConfiguration {
                 .build();
     }
 
-    private RequestParameter authorizationHeader() {
-        return new RequestParameterBuilder()
-                .name(accessProperties.getAuthorization())
-                .description("访问令牌")
-                .in("header")
-                .required(false)
+    private ApiKey apiKey() {
+        return new ApiKey(securityProperties.getName(), securityProperties.getKeyName(), securityProperties.getIn().getValue());
+    }
+
+    private SecurityContext securityContext() {
+        return SecurityContext.builder()
+                .securityReferences(Collections.singletonList(
+                        new SecurityReference(
+                                securityProperties.getName(),
+                                new AuthorizationScope[]{new AuthorizationScope("global", "access everything")}
+                        )
+                ))
                 .build();
     }
 }

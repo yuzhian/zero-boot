@@ -1,5 +1,7 @@
-package com.github.yuzhian.zero.boot.system.web;
+package com.github.yuzhian.zero.boot.application.controller;
 
+import com.github.yuzhian.zero.boot.context.ApplicationContextHolder;
+import com.github.yuzhian.zero.boot.properties.ApiProperties;
 import com.github.yuzhian.zero.boot.support.ApiException;
 import com.github.yuzhian.zero.boot.support.BaseController;
 import com.github.yuzhian.zero.boot.system.dto.AuthenticationDTO;
@@ -57,8 +59,14 @@ public class HelloController extends BaseController {
         throw new ApiException(HttpStatus.NOT_FOUND, "DEMO", "测试异常");
     }
 
+    @GetMapping("/bean")
+    @ApiOperation(value = "工具类获取Bean")
+    public ApiProperties bean() {
+        return ApplicationContextHolder.getBean(ApiProperties.class);
+    }
+
     @PostMapping("/login")
-    @ApiOperation(value = "security 登陆接口")
+    @ApiOperation(value = "security 登陆拦截测试")
     public Map<String, String> login(@RequestBody @Valid AuthenticationDTO dto) {
         if (log.isInfoEnabled()) log.info("login dto: {}", dto);
         return null;
@@ -73,14 +81,14 @@ public class HelloController extends BaseController {
     }
 
     @PostMapping("/logout")
-    @ApiOperation(value = "security 注销接口")
+    @ApiOperation(value = "security 注销拦截测试")
     public Map<String, String> logout() {
         return null;
     }
 
     @GetMapping("/role")
     @PreAuthorize("hasRole('ROLE_TEST')")
-    @ApiOperation(value = "权限测试: ROLE_TEST", notes = "需 ROLE_ADMIN 角色")
+    @ApiOperation(value = "权限测试: ROLE_TEST", notes = "需 ROLE_TEST 角色")
     public String hasRole() {
         return "hasRole";
     }

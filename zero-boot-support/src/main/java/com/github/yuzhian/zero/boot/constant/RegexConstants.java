@@ -15,4 +15,14 @@ public class RegexConstants {
      * 手机号
      */
     public static final String MOBILE = "^[1]\\d{10}$";
+
+    /**
+     * 身份证
+     */
+    public static final String ID_CARD = "(^\\d{15}$)|(^\\d{18}$)|(^\\d{17}(\\d|X|x)$)";
+
+    /**
+     * 银行卡
+     */
+    public static final String BANKCARD = "^[1-9]\\d{15,18}$";
 }

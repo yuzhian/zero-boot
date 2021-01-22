@@ -1,7 +1,7 @@
 package com.github.yuzhian.zero.boot.framework.configure.security;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.yuzhian.zero.boot.properties.AccessProperties;
+import com.github.yuzhian.zero.boot.properties.SecurityProperties;
+import com.github.yuzhian.zero.boot.context.ObjectMapperHolder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.*;
@@ -30,7 +30,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
-    private final AccessProperties accessProperties;
+    private final SecurityProperties securityProperties;
     private final AccountDetailsService accountDetailsService;
     private final RedisIndexedSessionRepository sessionRepository;
 
@@ -43,11 +43,10 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.httpBasic()
                 .and().authorizeRequests().anyRequest().permitAll() // 没注解权限的接口都开放
-                .and().formLogin().loginProcessingUrl("/login") // 登录接口地址
-                .and().logout().logoutUrl("/logout") // 注销接口
-                .logoutSuccessHandler((request, response, authentication) ->
-                        responseObject(response, "已登出"))
-                .and().csrf().disable().cors() // 禁用 csrf, 启用 cors. csrf 拦截除 GET|HEAD|TRACE|OPTIONS 之外的请求
+                .and().formLogin().loginProcessingUrl("/login")     // 登录接口地址
+                .and().logout().logoutUrl("/logout")                // 注销接口
+                .logoutSuccessHandler((request, response, authentication) -> responseObject(response, "已登出"))
+                .and().csrf().disable().cors()                      // 禁用 csrf, 启用 cors. csrf 拦截除 GET|HEAD|TRACE|OPTIONS 之外的请求
                 .and().addFilterAt(authenticationFilter(), UsernamePasswordAuthenticationFilter.class) // 认证过滤器
                 .sessionManagement().maximumSessions(1).maxSessionsPreventsLogin(true);
     }
@@ -60,7 +59,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         authenticationFilter.setAuthenticationManager(super.authenticationManager());
         authenticationFilter.setAuthenticationSuccessHandler((request, response, authentication) -> {
             // 认证成功返回 sessionId
-            responseObject(response, Map.of(accessProperties.getAuthorization(), request.getSession().getId()));
+            responseObject(response, Map.of(securityProperties.getName(), request.getSession().getId()));
         });
         authenticationFilter.setAuthenticationFailureHandler((request, response, exception) -> {
             // 认证失败返回
@@ -95,7 +94,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     private void responseObject(HttpServletResponse response, Object res) throws IOException {
         response.setContentType("application/json;charset=UTF-8");
         PrintWriter out = response.getWriter();
-        out.write(new ObjectMapper().writeValueAsString(res));
+        out.write(ObjectMapperHolder.writeValueAsString(res));
         out.flush();
         out.close();
     }

@@ -1,7 +1,7 @@
 package com.github.yuzhian.zero.boot.framework.configure.security;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.yuzhian.zero.boot.system.dto.AuthenticationDTO;
+import com.github.yuzhian.zero.boot.context.ObjectMapperHolder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import javax.servlet.http.HttpServletRequest;
@@ -33,9 +33,8 @@ public class AccountAuthenticationFilter extends UsernamePasswordAuthenticationF
     private AuthenticationDTO getAuthentication(HttpServletRequest request) {
         AuthenticationDTO authenticationDTO = threadLocal.get();
         if (authenticationDTO == null) {
-            ObjectMapper objectMapper = new ObjectMapper();
             try (InputStream is = request.getInputStream()) {
-                authenticationDTO = objectMapper.readValue(is, AuthenticationDTO.class);
+                authenticationDTO = ObjectMapperHolder.getObjectMapper().readValue(is, AuthenticationDTO.class);
             } catch (IOException ignore) {
             }
             if (authenticationDTO == null) authenticationDTO = new AuthenticationDTO();
