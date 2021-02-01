@@ -1,0 +1,2 @@
+#org.springframework.context.ApplicationContextInitializer=com.github.yuzhian.zero.boot.application.handler.HelloApplicationContextInitializer
+#org.springframework.boot.SpringApplicationRunListener=com.github.yuzhian.zero.boot.application.handler.HelloApplicationRunListener

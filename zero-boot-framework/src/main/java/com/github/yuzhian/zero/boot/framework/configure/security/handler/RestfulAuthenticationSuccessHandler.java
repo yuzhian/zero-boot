@@ -1,7 +1,7 @@
 package com.github.yuzhian.zero.boot.framework.configure.security.handler;
 
 import com.github.yuzhian.zero.boot.properties.SecurityProperties;
-import com.github.yuzhian.zero.boot.util.HttpServletResponseUtils;
+import com.github.yuzhian.zero.boot.util.ResponseWriter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
@@ -22,6 +22,6 @@ public class RestfulAuthenticationSuccessHandler implements AuthenticationSucces
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
         // 认证成功返回 sessionId
-        HttpServletResponseUtils.response(response, Map.of(securityProperties.getName(), request.getSession().getId()));
+        ResponseWriter.response(response, Map.of(securityProperties.getName(), request.getSession().getId()));
     }
 }
