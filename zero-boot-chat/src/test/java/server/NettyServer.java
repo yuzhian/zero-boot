@@ -15,10 +15,11 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class NettyServer {
     private static final int PORT = 8000;
+
     public static void main(String[] args) {
-        NioEventLoopGroup bossGroup = new NioEventLoopGroup();              // 监听端口
-        NioEventLoopGroup workerGroup = new NioEventLoopGroup();            // 处理每一条连接的数据读写
-        ServerBootstrap serverBootstrap = new ServerBootstrap();            // 引导类
+        final NioEventLoopGroup bossGroup = new NioEventLoopGroup();        // 监听端口
+        final NioEventLoopGroup workerGroup = new NioEventLoopGroup();      // 处理每一条连接的数据读写
+        final ServerBootstrap serverBootstrap = new ServerBootstrap();      // 引导类
         serverBootstrap
                 .group(bossGroup, workerGroup)                              // 配置线程组, 构建线程模型
                 .channel(NioServerSocketChannel.class)                      // 配置 IO 模型

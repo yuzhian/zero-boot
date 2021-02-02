@@ -23,6 +23,7 @@ public class Sequence {
     static class SnowFlake {
 
         // 时间起始标记点 2020-01-01 00:00:00
+        @SuppressWarnings("SpellCheckingInspection")
         private static final long TWEPOCH = 1577808000000L;
         // 序列号占用的位数
         private static final long SEQUENCE_BIT = 12;

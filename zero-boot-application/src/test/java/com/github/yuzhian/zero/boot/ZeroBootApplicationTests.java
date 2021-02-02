@@ -7,6 +7,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 class ZeroBootApplicationTests {
 
     @Test
+    @SuppressWarnings("EmptyMethod")
     void contextLoads() {
     }
 

@@ -26,6 +26,7 @@ public class SessionConfiguration implements BeanClassLoaderAware {
     private ClassLoader loader;
 
     @Bean
+    @SuppressWarnings("SameReturnValue")
     public ConfigureRedisAction configureRedisAction() {
         return ConfigureRedisAction.NO_OP;
     }
@@ -48,7 +49,7 @@ public class SessionConfiguration implements BeanClassLoaderAware {
     }
 
     @Override
-    public void setBeanClassLoader(ClassLoader classLoader) {
+    public void setBeanClassLoader(@SuppressWarnings("NullableProblems") ClassLoader classLoader) {
         this.loader = classLoader;
     }
 }

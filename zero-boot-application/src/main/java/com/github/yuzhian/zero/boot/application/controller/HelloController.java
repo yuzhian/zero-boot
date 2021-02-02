@@ -34,6 +34,7 @@ import java.util.concurrent.TimeUnit;
 @Profile(value = "dev")
 @RequiredArgsConstructor
 @Api(tags = "功能测试控制器")
+@SuppressWarnings("SameReturnValue")
 public class HelloController extends BaseController {
     private final RedisTemplate<String, Object> redisTemplate;
     private final IAccountService accountService;

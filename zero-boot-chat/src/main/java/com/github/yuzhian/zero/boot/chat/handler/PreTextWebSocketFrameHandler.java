@@ -32,7 +32,7 @@ public class PreTextWebSocketFrameHandler extends SimpleChannelInboundHandler<Te
     private String authKey;
 
     @Override
-    protected void channelRead0(ChannelHandlerContext ctx, TextWebSocketFrame msg) throws JsonProcessingException {
+    protected void channelRead0(ChannelHandlerContext ctx, TextWebSocketFrame msg) {
         try {
             // not login
             Session session = repository.findById((String) (ObjectMapperHolder.readValue(msg.text(), Map.class)).get(authKey));
