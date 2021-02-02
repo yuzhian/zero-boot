@@ -19,7 +19,7 @@ public final class ApplicationContextHolder implements ApplicationContextAware {
     }
 
     @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+    public void setApplicationContext(@SuppressWarnings("NullableProblems") ApplicationContext applicationContext) throws BeansException {
         if (ApplicationContextHolder.applicationContext == null) {
             ApplicationContextHolder.applicationContext = applicationContext;
         }
