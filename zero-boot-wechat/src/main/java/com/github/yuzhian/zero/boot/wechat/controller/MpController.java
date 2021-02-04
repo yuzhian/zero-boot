@@ -7,12 +7,18 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import me.chanjar.weixin.common.error.WxErrorException;
+import me.chanjar.weixin.mp.api.WxMpMessageRouter;
 import me.chanjar.weixin.mp.api.WxMpService;
 import me.chanjar.weixin.mp.bean.message.WxMpXmlMessage;
 import me.chanjar.weixin.mp.bean.message.WxMpXmlOutMessage;
+import me.chanjar.weixin.mp.bean.result.WxMpUser;
+import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 /**
  * @author yuzhian
@@ -23,8 +29,19 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @RequestMapping(value = "/wechat/mp")
 public class MpController extends BaseController {
+    private final WxMpMessageRouter wxMpMessageRouter;
     private final WxMpService wxMpService;
     private final IMpService mpService;
+
+    @Profile("dev")
+    @GetMapping("/test")
+    @ApiOperation(value = "微信功能测试", notes = "测试微信SDK是否可以正常调用")
+    public Map<String, String> test() throws WxErrorException {
+        return Map.of(
+                "appId", wxMpService.getWxMpConfigStorage().getAppId(),
+                "accessToken", wxMpService.getAccessToken()
+        );
+    }
 
     @GetMapping(produces = MediaType.TEXT_PLAIN_VALUE)
     @ApiOperation(value = "微信消息验证", notes = "供微信验证服务器资源")
@@ -48,14 +65,20 @@ public class MpController extends BaseController {
         }
 
         WxMpXmlMessage request = switch (encryptType) {
-            case "raw" -> WxMpXmlMessage.fromXml(xml); // 明文消息
-            case "aes" -> WxMpXmlMessage.fromEncryptedXml(xml, wxMpService.getWxMpConfigStorage(), timestamp, nonce, msgSignature); // AES加密消息, 需配置`zero.wechat.mp.aes-key`
+            case "raw" -> WxMpXmlMessage.fromXml(xml);
+            case "aes" -> WxMpXmlMessage.fromEncryptedXml(xml, wxMpService.getWxMpConfigStorage(), timestamp, nonce, msgSignature);
             default -> throw new ApiException(HttpStatus.BAD_REQUEST, "ENCRYPT_TYPE_UNRECOGNIZED", "加密类型不可识别");
         };
         if (log.isDebugEnabled()) log.debug("message encrypt type: {}, content：{} ", encryptType, request.toString());
 
         // 处理消息并返回
-        WxMpXmlOutMessage response = this.mpService.route(request);
+        WxMpXmlOutMessage response = wxMpMessageRouter.route(request);
         return response == null ? "" : response.toXml();
+    }
+
+    @GetMapping(value = "/userinfo/{openid}")
+    @ApiOperation(value = "微信用户资料", notes = "通过openid获取用户资料")
+    public WxMpUser userinfo(@PathVariable String openid) throws WxErrorException {
+        return mpService.getUserInfo(openid, "zh_CN");
     }
 }

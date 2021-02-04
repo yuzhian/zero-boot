@@ -1,12 +1,11 @@
 package com.github.yuzhian.zero.boot.wechat.configure;
 
-import com.github.yuzhian.zero.boot.properties.MpProperties;
-import lombok.RequiredArgsConstructor;
+import com.github.yuzhian.zero.boot.wechat.handler.LogHandler;
+import com.github.yuzhian.zero.boot.wechat.handler.MsgHandler;
+import com.github.yuzhian.zero.boot.wechat.handler.SubscribeHandler;
+import me.chanjar.weixin.common.api.WxConsts;
+import me.chanjar.weixin.mp.api.WxMpMessageRouter;
 import me.chanjar.weixin.mp.api.WxMpService;
-import me.chanjar.weixin.mp.api.impl.WxMpServiceImpl;
-import me.chanjar.weixin.mp.config.WxMpConfigStorage;
-import me.chanjar.weixin.mp.config.impl.WxMpDefaultConfigImpl;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -14,24 +13,19 @@ import org.springframework.context.annotation.Configuration;
  * @author yuzhian
  */
 @Configuration
-@RequiredArgsConstructor
 public class MpConfiguration {
-    private final MpProperties mpProperties;
-
-    @Bean(name = "wxMpConfigStorage")
-    public WxMpConfigStorage wxMpConfigStorage() {
-        WxMpDefaultConfigImpl configStorage = new WxMpDefaultConfigImpl();
-        configStorage.setAppId(mpProperties.getAppId());
-        configStorage.setSecret(mpProperties.getSecret());
-        configStorage.setToken(mpProperties.getToken());
-        configStorage.setAesKey(mpProperties.getAesKey());
-        return configStorage;
-    }
-
-    @Bean(name = "wxMpService")
-    public WxMpService wxMpService(@Qualifier("wxMpConfigStorage") WxMpConfigStorage wxMpConfigStorage) {
-        WxMpService wxMpService = new WxMpServiceImpl();
-        wxMpService.setWxMpConfigStorage(wxMpConfigStorage);
-        return wxMpService;
+    @Bean
+    public WxMpMessageRouter wxMpMessageRouter(
+            WxMpService wxMpService,
+            LogHandler logHandler,
+            MsgHandler msgHandler,
+            SubscribeHandler subscribeHandler
+    ) {
+        final WxMpMessageRouter router = new WxMpMessageRouter(wxMpService);
+        router.rule().handler(logHandler).next();                                                           // 所有 -> 日志, 异步
+        router.rule().async(false).msgType(WxConsts.XmlMsgType.EVENT).event(WxConsts.EventType.SUBSCRIBE)   // 关注
+                .handler(subscribeHandler).end();
+        router.rule().async(false).handler(msgHandler).end();                                               // 默认, 转发消息给客服人员
+        return router;
     }
 }

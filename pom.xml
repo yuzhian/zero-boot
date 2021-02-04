@@ -32,7 +32,7 @@
         <spring-security-cas.version>5.4.1</spring-security-cas.version>
         <springfox.version>3.0.0</springfox.version>
         <aliyun.sms.version>1.0.0</aliyun.sms.version>
-        <wechat.version>4.0.4.B</wechat.version>
+        <wechat.version>4.0.0</wechat.version>
     </properties>
 
     <dependencyManagement>
@@ -68,32 +68,22 @@
             <!-- wechat -->
             <dependency>
                 <groupId>com.github.binarywang</groupId>
-                <artifactId>weixin-java-common</artifactId>
+                <artifactId>wx-java-mp-spring-boot-starter</artifactId>
                 <version>${wechat.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.github.binarywang</groupId>
-                <artifactId>weixin-java-open</artifactId>
+                <artifactId>wx-java-open-spring-boot-starter</artifactId>
                 <version>${wechat.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.github.binarywang</groupId>
-                <artifactId>weixin-java-pay</artifactId>
+                <artifactId>wx-java-miniapp-spring-boot-starter</artifactId>
                 <version>${wechat.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.github.binarywang</groupId>
-                <artifactId>weixin-java-miniapp</artifactId>
-                <version>${wechat.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.github.binarywang</groupId>
-                <artifactId>weixin-java-mp</artifactId>
-                <version>${wechat.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.github.binarywang</groupId>
-                <artifactId>weixin-java-cp</artifactId>
+                <artifactId>wx-java-pay-spring-boot-starter</artifactId>
                 <version>${wechat.version}</version>
             </dependency>
         </dependencies>
