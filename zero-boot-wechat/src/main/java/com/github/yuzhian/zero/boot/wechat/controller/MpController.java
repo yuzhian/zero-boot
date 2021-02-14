@@ -1,6 +1,6 @@
 package com.github.yuzhian.zero.boot.wechat.controller;
 
-import com.github.yuzhian.zero.boot.support.ApiException;
+import com.github.yuzhian.zero.boot.exception.ApiException;
 import com.github.yuzhian.zero.boot.support.BaseController;
 import com.github.yuzhian.zero.boot.wechat.service.IMpService;
 import io.swagger.annotations.Api;

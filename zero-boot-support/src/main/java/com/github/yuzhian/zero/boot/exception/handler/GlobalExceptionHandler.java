@@ -1,6 +1,6 @@
-package com.github.yuzhian.zero.boot.framework.exception;
+package com.github.yuzhian.zero.boot.exception.handler;
 
-import com.github.yuzhian.zero.boot.support.ApiException;
+import com.github.yuzhian.zero.boot.exception.ApiException;
 import com.github.yuzhian.zero.boot.support.ErrorEntity;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;

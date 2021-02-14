@@ -1,8 +1,8 @@
-package com.github.yuzhian.zero.boot.framework.configure.security;
+package com.github.yuzhian.zero.boot.security.configure;
 
-import com.github.yuzhian.zero.boot.framework.configure.security.handler.RestfulAuthenticationFailureHandler;
-import com.github.yuzhian.zero.boot.framework.configure.security.handler.RestfulAuthenticationSuccessHandler;
-import com.github.yuzhian.zero.boot.framework.configure.security.handler.RestfulLogoutSuccessHandler;
+import com.github.yuzhian.zero.boot.security.handler.RestfulAuthenticationFailureHandler;
+import com.github.yuzhian.zero.boot.security.handler.RestfulAuthenticationSuccessHandler;
+import com.github.yuzhian.zero.boot.security.handler.RestfulLogoutSuccessHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;

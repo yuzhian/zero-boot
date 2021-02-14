@@ -1,4 +1,4 @@
-package com.github.yuzhian.zero.boot.framework.configure;
+package com.github.yuzhian.zero.boot.configure;
 
 import com.alibaba.druid.support.http.StatViewServlet;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;

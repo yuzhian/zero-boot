@@ -1,4 +1,4 @@
-package com.github.yuzhian.zero.boot.framework.configure;
+package com.github.yuzhian.zero.boot.configure;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

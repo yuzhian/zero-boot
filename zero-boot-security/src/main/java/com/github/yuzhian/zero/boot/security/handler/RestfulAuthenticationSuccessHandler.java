@@ -1,4 +1,4 @@
-package com.github.yuzhian.zero.boot.framework.configure.security.handler;
+package com.github.yuzhian.zero.boot.security.handler;
 
 import com.github.yuzhian.zero.boot.properties.SecurityProperties;
 import com.github.yuzhian.zero.boot.util.ResponseWriter;

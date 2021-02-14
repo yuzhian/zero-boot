@@ -1,7 +1,7 @@
 package com.github.yuzhian.zero.boot.system.service.impl;
 
 import com.github.yuzhian.zero.boot.constant.RegexConstants;
-import com.github.yuzhian.zero.boot.support.ApiException;
+import com.github.yuzhian.zero.boot.exception.ApiException;
 import com.github.yuzhian.zero.boot.support.BaseService;
 import com.github.yuzhian.zero.boot.system.dao.AccountRepository;
 import com.github.yuzhian.zero.boot.system.dto.RegisterDTO;

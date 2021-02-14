@@ -2,7 +2,7 @@ package com.github.yuzhian.zero.boot.resource.service.impl;
 
 import com.github.yuzhian.zero.boot.properties.ResourceProperties;
 import com.github.yuzhian.zero.boot.resource.service.IMultipartUploadService;
-import com.github.yuzhian.zero.boot.support.ApiException;
+import com.github.yuzhian.zero.boot.exception.ApiException;
 import com.github.yuzhian.zero.boot.util.DigestUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;

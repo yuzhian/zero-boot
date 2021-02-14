@@ -1,4 +1,4 @@
-package com.github.yuzhian.zero.boot.framework.configure;
+package com.github.yuzhian.zero.boot.configure;
 
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;

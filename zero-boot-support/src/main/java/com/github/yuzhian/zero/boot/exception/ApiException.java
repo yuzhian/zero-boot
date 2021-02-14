@@ -1,4 +1,4 @@
-package com.github.yuzhian.zero.boot.support;
+package com.github.yuzhian.zero.boot.exception;
 
 import lombok.Getter;
 import org.springframework.http.HttpStatus;

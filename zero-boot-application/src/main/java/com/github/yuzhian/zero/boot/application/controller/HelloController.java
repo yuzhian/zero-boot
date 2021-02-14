@@ -2,7 +2,7 @@ package com.github.yuzhian.zero.boot.application.controller;
 
 import com.github.yuzhian.zero.boot.context.ApplicationContextHolder;
 import com.github.yuzhian.zero.boot.properties.ApiProperties;
-import com.github.yuzhian.zero.boot.support.ApiException;
+import com.github.yuzhian.zero.boot.exception.ApiException;
 import com.github.yuzhian.zero.boot.support.BaseController;
 import com.github.yuzhian.zero.boot.system.dto.AuthenticationDTO;
 import com.github.yuzhian.zero.boot.system.entity.Account;

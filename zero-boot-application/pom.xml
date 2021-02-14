@@ -13,7 +13,12 @@
     <dependencies>
         <dependency>
             <groupId>com.github.yuzhian</groupId>
-            <artifactId>zero-boot-framework</artifactId>
+            <artifactId>zero-boot-security</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.yuzhian</groupId>
+            <artifactId>zero-boot-system</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

@@ -1,4 +1,4 @@
-package com.github.yuzhian.zero.boot.framework.configure.security;
+package com.github.yuzhian.zero.boot.security.configure;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.yuzhian.zero.boot.properties.SecurityProperties;
