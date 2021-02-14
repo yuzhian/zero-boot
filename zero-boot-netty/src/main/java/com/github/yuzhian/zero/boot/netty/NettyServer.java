@@ -1,8 +1,8 @@
-package com.github.yuzhian.zero.boot.chat;
+package com.github.yuzhian.zero.boot.netty;
 
-import com.github.yuzhian.zero.boot.chat.handler.IdleStateCheckHandler;
-import com.github.yuzhian.zero.boot.chat.handler.PreTextWebSocketFrameHandler;
-import com.github.yuzhian.zero.boot.chat.handler.TextWebSocketFrameHandler;
+import com.github.yuzhian.zero.boot.netty.handler.WebSocketIdleStateHandler;
+import com.github.yuzhian.zero.boot.netty.handler.WebSocketAuthenticationHandler;
+import com.github.yuzhian.zero.boot.netty.handler.WebSocketMessageHandler;
 import com.github.yuzhian.zero.boot.properties.ChatProperties;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelInitializer;
@@ -27,8 +27,8 @@ import javax.annotation.PreDestroy;
 @RequiredArgsConstructor
 public class NettyServer {
     private final ChatProperties chatProperties;
-    private final PreTextWebSocketFrameHandler preTextWebSocketFrameHandler;
-    private final TextWebSocketFrameHandler textWebSocketFrameHandler;
+    private final WebSocketAuthenticationHandler authenticationHandler;
+    private final WebSocketMessageHandler messageHandler;
 
     private final NioEventLoopGroup boss = new NioEventLoopGroup();
     private final NioEventLoopGroup work = new NioEventLoopGroup();
@@ -46,9 +46,9 @@ public class NettyServer {
                         .addLast(new HttpServerCodec())
                         .addLast(new HttpObjectAggregator(65536))
                         .addLast(new WebSocketServerProtocolHandler(chatProperties.getWebsocketPath()))
-                        .addLast(new IdleStateCheckHandler(chatProperties.getMaxInactive()))
-                        .addLast(preTextWebSocketFrameHandler)
-                        .addLast(textWebSocketFrameHandler)
+                        .addLast(new WebSocketIdleStateHandler(chatProperties.getMaxInactive()))
+                        .addLast(authenticationHandler)
+                        .addLast(messageHandler)
                 ;
             }
         });

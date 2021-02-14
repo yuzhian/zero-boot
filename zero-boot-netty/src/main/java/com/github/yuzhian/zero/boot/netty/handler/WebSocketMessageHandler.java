@@ -1,4 +1,4 @@
-package com.github.yuzhian.zero.boot.chat.handler;
+package com.github.yuzhian.zero.boot.netty.handler;
 
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @Component
 @ChannelHandler.Sharable
-public class TextWebSocketFrameHandler extends SimpleChannelInboundHandler<TextWebSocketFrame> {
+public class WebSocketMessageHandler extends SimpleChannelInboundHandler<TextWebSocketFrame> {
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, TextWebSocketFrame msg) {
         if (log.isDebugEnabled()) log.debug("server receives the message: {}", msg.text());

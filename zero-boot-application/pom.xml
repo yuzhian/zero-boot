@@ -28,7 +28,7 @@
         </dependency>
         <dependency>
             <groupId>com.github.yuzhian</groupId>
-            <artifactId>zero-boot-chat</artifactId>
+            <artifactId>zero-boot-netty</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

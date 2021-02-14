@@ -22,7 +22,7 @@
         <module>zero-boot-system</module>
         <module>zero-boot-resource</module>
         <module>zero-boot-message</module>
-        <module>zero-boot-chat</module>
+        <module>zero-boot-netty</module>
         <module>zero-boot-wechat</module>
     </modules>
 

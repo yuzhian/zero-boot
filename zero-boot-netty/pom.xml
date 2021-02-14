@@ -8,7 +8,7 @@
         <version>0.0.1-SNAPSHOT</version>
         <relativePath/>
     </parent>
-    <artifactId>zero-boot-chat</artifactId>
+    <artifactId>zero-boot-netty</artifactId>
 
     <dependencies>
         <dependency>

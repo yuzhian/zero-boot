@@ -1,4 +1,4 @@
-package com.github.yuzhian.zero.boot.chat.handler;
+package com.github.yuzhian.zero.boot.netty.handler;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
@@ -14,11 +14,11 @@ import java.util.concurrent.TimeUnit;
  * @author yuzhian
  */
 @Slf4j
-public class IdleStateCheckHandler extends IdleStateHandler {
+public class WebSocketIdleStateHandler extends IdleStateHandler {
     private final long readerIdleTime;
     private static final TextWebSocketFrame maxIdleTimeResponse = new TextWebSocketFrame("{'code': 'MAXIMUM_IDLE_TIME'}");
 
-    public IdleStateCheckHandler(long readerIdleTime) {
+    public WebSocketIdleStateHandler(long readerIdleTime) {
         super(readerIdleTime, 0, 0, TimeUnit.SECONDS);
         this.readerIdleTime = readerIdleTime;
     }

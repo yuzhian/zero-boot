@@ -1,4 +1,4 @@
-package com.github.yuzhian.zero.boot.chat.handler;
+package com.github.yuzhian.zero.boot.netty.handler;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.github.yuzhian.zero.boot.context.ObjectMapperHolder;
@@ -26,7 +26,7 @@ import java.util.Map;
 @Component
 @RequiredArgsConstructor
 @ChannelHandler.Sharable
-public class PreTextWebSocketFrameHandler extends SimpleChannelInboundHandler<TextWebSocketFrame> {
+public class WebSocketAuthenticationHandler extends SimpleChannelInboundHandler<TextWebSocketFrame> {
     private final SessionRepository<? extends Session> repository;
     @Value("${zero.security.name}")
     private String authKey;
