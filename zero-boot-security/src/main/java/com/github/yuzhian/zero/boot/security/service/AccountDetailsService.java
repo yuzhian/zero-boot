@@ -1,4 +1,4 @@
-package com.github.yuzhian.zero.boot.security.configure;
+package com.github.yuzhian.zero.boot.security.service;
 
 import com.github.yuzhian.zero.boot.system.entity.Account;
 import com.github.yuzhian.zero.boot.system.service.IAccountService;
@@ -27,14 +27,12 @@ public class AccountDetailsService implements UserDetailsService, Serializable {
         if (null == account) {
             throw new UsernameNotFoundException("用户名不存在");
         }
-        Set<String> roles = new HashSet<>();
         Set<String> authorities = new HashSet<>();
         account.getRoles().forEach(role -> {
-            roles.add(role.getRole());
+            authorities.add("ROLE_" + role.getRole());
             role.getPermissions().forEach(permission -> authorities.add(permission.getPermission()));
         });
         return User.builder().username(account.getUserId()).password(account.getPassword())
-                .roles(roles.toArray(String[]::new))
                 .authorities(authorities.toArray(String[]::new))
                 .build();
     }

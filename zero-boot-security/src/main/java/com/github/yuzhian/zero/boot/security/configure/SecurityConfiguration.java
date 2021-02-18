@@ -1,18 +1,22 @@
 package com.github.yuzhian.zero.boot.security.configure;
 
+import com.github.yuzhian.zero.boot.security.filter.AccountAuthenticationFilter;
 import com.github.yuzhian.zero.boot.security.handler.RestfulAuthenticationFailureHandler;
 import com.github.yuzhian.zero.boot.security.handler.RestfulAuthenticationSuccessHandler;
-import com.github.yuzhian.zero.boot.security.handler.RestfulLogoutSuccessHandler;
+import com.github.yuzhian.zero.boot.security.service.AccountDetailsService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.session.ConcurrentSessionControlAuthenticationStrategy;
+import org.springframework.security.web.session.ConcurrentSessionFilter;
 import org.springframework.session.data.redis.RedisIndexedSessionRepository;
 import org.springframework.session.security.SpringSessionBackedSessionRegistry;
 
@@ -25,10 +29,22 @@ import org.springframework.session.security.SpringSessionBackedSessionRegistry;
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     private final AccountDetailsService accountDetailsService;
-    private final RestfulLogoutSuccessHandler logoutSuccessHandler;
-    private final RestfulAuthenticationSuccessHandler restfulAuthenticationSuccessHandler;
-    private final RestfulAuthenticationFailureHandler restfulAuthenticationFailureHandler;
+    private final RestfulAuthenticationSuccessHandler authenticationSuccessHandler;
+    private final RestfulAuthenticationFailureHandler authenticationFailureHandler;
     private final RedisIndexedSessionRepository sessionRepository;
+    private SessionRegistry sessionRegistry;
+
+    @Bean
+    public SessionRegistry sessionRegistry() {
+        if (null == this.sessionRegistry) {
+            synchronized (this) {
+                if (null == sessionRegistry) {
+                    this.sessionRegistry = new SpringSessionBackedSessionRegistry<>(sessionRepository);
+                }
+            }
+        }
+        return sessionRegistry;
+    }
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
@@ -37,35 +53,35 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.httpBasic()
-                .and().authorizeRequests().anyRequest().permitAll() // 没注解权限的接口都开放
-                .and().formLogin().loginProcessingUrl("/login")     // 登录接口地址
-                .and().logout().logoutUrl("/logout")                // 注销接口
-                .logoutSuccessHandler(logoutSuccessHandler)
-                .and().csrf().disable().cors()                      // 禁用 csrf, 启用 cors. csrf 拦截除 GET|HEAD|TRACE|OPTIONS 之外的请求
-                .and().addFilterAt(authenticationFilter(), UsernamePasswordAuthenticationFilter.class) // 认证过滤器
-                .sessionManagement().maximumSessions(1).maxSessionsPreventsLogin(true);
+        http
+                .authorizeRequests().anyRequest().permitAll()
+                .and().formLogin().loginProcessingUrl("/login")
+                .and().logout().logoutUrl("/logout")
+                .and().csrf().disable().cors()
+                .and().addFilterAt(authenticationFilter(), UsernamePasswordAuthenticationFilter.class)
+                .addFilterAt(concurrentSessionFilter(), ConcurrentSessionFilter.class)
+        ;
     }
 
-    /**
-     * 认证过滤器配置
-     */
     private UsernamePasswordAuthenticationFilter authenticationFilter() throws Exception {
         UsernamePasswordAuthenticationFilter authenticationFilter = new AccountAuthenticationFilter();
         authenticationFilter.setAuthenticationManager(super.authenticationManager());
-        authenticationFilter.setAuthenticationSuccessHandler(restfulAuthenticationSuccessHandler);
-        authenticationFilter.setAuthenticationFailureHandler(restfulAuthenticationFailureHandler);
-        authenticationFilter.setSessionAuthenticationStrategy(authStrategy());
+        authenticationFilter.setAuthenticationSuccessHandler(authenticationSuccessHandler);
+        authenticationFilter.setAuthenticationFailureHandler(authenticationFailureHandler);
+        authenticationFilter.setSessionAuthenticationStrategy(concurrentSessionControlAuthenticationStrategy());
         return authenticationFilter;
     }
 
-    /**
-     * 并发会话控制
-     */
-    private ConcurrentSessionControlAuthenticationStrategy authStrategy() {
-        ConcurrentSessionControlAuthenticationStrategy authenticationStrategy =
+    private ConcurrentSessionControlAuthenticationStrategy concurrentSessionControlAuthenticationStrategy() {
+        ConcurrentSessionControlAuthenticationStrategy concurrentSessionControlStrategy =
                 new ConcurrentSessionControlAuthenticationStrategy(new SpringSessionBackedSessionRegistry<>(this.sessionRepository));
-        authenticationStrategy.setExceptionIfMaximumExceeded(true);
-        return authenticationStrategy;
+        concurrentSessionControlStrategy.setMaximumSessions(1);
+        // 拦截新登录
+        // concurrentSessionControlStrategy.setExceptionIfMaximumExceeded(true);
+        return concurrentSessionControlStrategy;
+    }
+
+    private ConcurrentSessionFilter concurrentSessionFilter() {
+        return new ConcurrentSessionFilter(sessionRegistry());
     }
 }

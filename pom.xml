@@ -29,7 +29,6 @@
     <properties>
         <java.version>15</java.version>
         <druid.version>1.2.1</druid.version>
-        <spring-security-cas.version>5.4.1</spring-security-cas.version>
         <springfox.version>3.0.0</springfox.version>
         <aliyun.sms.version>1.0.0</aliyun.sms.version>
         <wechat.version>4.0.0</wechat.version>
@@ -37,11 +36,6 @@
 
     <dependencyManagement>
         <dependencies>
-            <dependency>
-                <groupId>org.springframework.security</groupId>
-                <artifactId>spring-security-cas</artifactId>
-                <version>${spring-security-cas.version}</version>
-            </dependency>
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-pool2</artifactId>

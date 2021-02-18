@@ -71,7 +71,7 @@ CREATE TABLE `sys_permission`  (
 -- ----------------------------
 -- Records of sys_permission
 -- ----------------------------
-INSERT INTO `sys_permission` VALUES ('1', 'SYS_HELLO_AUTHORITY_GET', '权限接口测试', b'0');
+INSERT INTO `sys_permission` VALUES ('1', 'HELLO_PERMISSION_GET', '权限接口测试', b'0');
 
 -- ----------------------------
 -- Table structure for sys_role

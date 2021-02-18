@@ -47,7 +47,7 @@ public class RestfulAuthenticationFailureHandler implements AuthenticationFailur
         // 需要从异常中取值的返回信息
         if (exception instanceof SessionAuthenticationException) {
             ResponseWriter.response(response, ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(Map.of("code", "AUTHENTICATION_FAILED", "message", exception.getMessage())));
+                    .body(Map.of("message", exception.getMessage())));
         } else {
             ResponseWriter.response(response, ERROR_RESPONSE_MAP.get(exception.getClass()));
         }
