@@ -1,7 +1,7 @@
 package com.github.yuzhian.zero.boot.properties;
 
+import io.swagger.v3.oas.models.security.SecurityScheme;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
@@ -17,26 +17,21 @@ public class SecurityProperties {
     /**
      * 安全方案
      */
-    private String keyName;
+    private String key = "default_key";
     /**
      * 安全方案
      */
-    private String name;
+    private SecurityScheme.Type type = SecurityScheme.Type.APIKEY;
     /**
      * 请求位置
      */
-    private ApiKeyAuthIn in = ApiKeyAuthIn.HEADER;
-
+    private SecurityScheme.In in = SecurityScheme.In.HEADER;
     /**
-     * TODO 目前仅支持header
+     * 安全方案
      */
-    @RequiredArgsConstructor
-    public enum ApiKeyAuthIn {
-        HEADER("header"),
-        QUERY("query"),
-        COOKIE("cookie");
-
-        @Getter
-        private final String value;
-    }
+    private String name = "X-Auth-Token";
+    /**
+     * 安全方案
+     */
+    private String description = "system access token";
 }

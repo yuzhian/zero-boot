@@ -24,7 +24,7 @@ public class MaskUtils {
      * @param rn     右侧保留位数
      */
     public static String replace(String string, int ln, char to, int rn) {
-        if (StringUtils.isEmpty(string) || string.length() <= ln + rn) {
+        if (!StringUtils.hasText(string) || string.length() <= ln + rn) {
             return string;
         }
         return string.replaceAll(String.format("(?<=\\w{%d})\\w+(?=\\w{%d})", ln, rn), String.valueOf(to).repeat(string.length() - ln - rn));
@@ -36,7 +36,7 @@ public class MaskUtils {
      * @param to     替换的字符
      */
     public static String replace(String string, int ln, char to) {
-        if (StringUtils.isEmpty(string) || string.length() <= ln) {
+        if (!StringUtils.hasText(string) || string.length() <= ln) {
             return string;
         }
         return string.replaceAll(String.format("(?<=\\w{%d})\\w+", ln), String.valueOf(to).repeat(string.length() - ln));
@@ -48,7 +48,7 @@ public class MaskUtils {
      * @param rn     右侧保留位数
      */
     public static String replace(String string, char to, int rn) {
-        if (StringUtils.isEmpty(string) || string.length() <= rn) {
+        if (!StringUtils.hasText(string) || string.length() <= rn) {
             return string;
         }
         return string.replaceAll(String.format("\\w+(?=\\w{%d})", rn), String.valueOf(to).repeat(string.length() - rn));

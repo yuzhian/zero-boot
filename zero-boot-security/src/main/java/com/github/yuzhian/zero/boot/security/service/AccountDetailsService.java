@@ -1,6 +1,7 @@
 package com.github.yuzhian.zero.boot.security.service;
 
 import com.github.yuzhian.zero.boot.system.entity.Account;
+import com.github.yuzhian.zero.boot.system.entity.Permission;
 import com.github.yuzhian.zero.boot.system.service.IAccountService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.User;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Service;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * @author yuzhian
@@ -30,7 +32,7 @@ public class AccountDetailsService implements UserDetailsService, Serializable {
         Set<String> authorities = new HashSet<>();
         account.getRoles().forEach(role -> {
             authorities.add("ROLE_" + role.getRole());
-            role.getPermissions().forEach(permission -> authorities.add(permission.getPermission()));
+            authorities.addAll(role.getPermissions().stream().map(Permission::getPermission).collect(Collectors.toSet()));
         });
         return User.builder().username(account.getUserId()).password(account.getPassword())
                 .authorities(authorities.toArray(String[]::new))

@@ -1,16 +1,15 @@
 package com.github.yuzhian.zero.boot.application.controller;
 
-import com.aliyuncs.utils.StringUtils;
 import com.github.yuzhian.zero.boot.context.ApplicationContextHolder;
 import com.github.yuzhian.zero.boot.exception.ApiException;
-import com.github.yuzhian.zero.boot.properties.ApiProperties;
+import com.github.yuzhian.zero.boot.properties.OpenApiProperties;
 import com.github.yuzhian.zero.boot.properties.SecurityProperties;
 import com.github.yuzhian.zero.boot.support.BaseController;
 import com.github.yuzhian.zero.boot.system.dto.LoginDTO;
 import com.github.yuzhian.zero.boot.system.entity.Account;
 import com.github.yuzhian.zero.boot.system.service.IAccountService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Profile;
@@ -22,6 +21,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.session.SessionInformation;
 import org.springframework.security.core.session.SessionRegistry;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -38,8 +38,7 @@ import java.util.concurrent.TimeUnit;
 @RestController
 @Profile(value = "dev")
 @RequiredArgsConstructor
-@Api(tags = "功能测试控制器")
-@SuppressWarnings("SameReturnValue")
+@Tag(name = "HelloController", description = "功能测试控制器")
 public class HelloController extends BaseController {
     private static final String TEST_SpEL_ROLE = "hasRole('ROLE_TEST')";
     private static final String TEST_SpEL_PERMISSION = "hasAuthority('HELLO_PERMISSION_GET')";
@@ -50,12 +49,12 @@ public class HelloController extends BaseController {
     private final IAccountService accountService;
 
     @GetMapping(value = "/jpa/{account}")
-    @ApiOperation(value = "jpa 测试", notes = "账号获取用户信息")
+    @Operation(summary = "jpa 测试", description = "账号获取用户信息")
     public Account saveRedis(@PathVariable @NotEmpty(message = "查询账号不可空") String account) {
         return accountService.getAccount(account);
     }
 
-    @ApiOperation(value = "redis 测试")
+    @Operation(summary = "redis 测试")
     @PostMapping(value = "/redis/{key}")
     public ResponseEntity<Object> testRedis(@PathVariable @NotEmpty(message = "key不可为空") String key,
                                             @RequestBody @NotEmpty(message = "val不可为空") Map<String, Object> val) {
@@ -64,37 +63,37 @@ public class HelloController extends BaseController {
         return ResponseEntity.ok(Objects.requireNonNull(ops.get(key)));
     }
 
-    @ApiOperation(value = "异常处理测试")
+    @Operation(summary = "异常处理测试")
     @GetMapping(value = "/exception")
     public ResponseEntity<Void> testExceptionHandle() {
         throw new ApiException(HttpStatus.NOT_FOUND, "DEMO", "测试异常");
     }
 
     @GetMapping("/bean")
-    @ApiOperation(value = "工具类获取Bean")
-    public ApiProperties bean() {
-        return ApplicationContextHolder.getBean(ApiProperties.class);
+    @Operation(summary = "工具类获取Bean")
+    public OpenApiProperties bean() {
+        return ApplicationContextHolder.getBean(OpenApiProperties.class);
     }
 
     @PostMapping("/login")
-    @ApiOperation(value = "security 登陆拦截测试")
+    @Operation(summary = "security 登陆拦截测试")
     public Map<String, String> login(@RequestBody @Valid LoginDTO dto) {
         if (log.isInfoEnabled()) log.info("login dto: {}", dto);
         return null;
     }
 
     @PostMapping("/logout")
-    @ApiOperation(value = "security 注销拦截测试")
+    @Operation(summary = "security 注销拦截测试")
     public Map<String, String> logout() {
         return null;
     }
 
     @GetMapping({"/expire", "/expire/{sessionId}"})
-    @ApiOperation(value = "主动过期session")
+    @Operation(summary = "主动过期session")
     public ResponseEntity<Void> expire(@PathVariable(required = false) String sessionId, HttpServletRequest request) {
-        if (StringUtils.isEmpty(sessionId)) {
+        if (!StringUtils.hasText(sessionId)) {
             sessionId = request.getHeader(securityProperties.getName());
-            if (StringUtils.isEmpty(sessionId)) {
+            if (!StringUtils.hasText(sessionId)) {
                 return ResponseEntity.badRequest().build();
             }
         }
@@ -105,7 +104,7 @@ public class HelloController extends BaseController {
 
     @GetMapping("/userinfo")
     @PreAuthorize("isFullyAuthenticated()")
-    @ApiOperation(value = "security 获取用户信息")
+    @Operation(summary = "security 获取用户信息")
     public Authentication userinfo() {
         if (log.isInfoEnabled()) log.info("userid: {}, userinfo: {}", super.userid(), super.userinfo());
         return super.userinfo();
@@ -113,14 +112,14 @@ public class HelloController extends BaseController {
 
     @GetMapping("/role")
     @PreAuthorize(TEST_SpEL_ROLE)
-    @ApiOperation(value = "角色测试", notes = TEST_SpEL_ROLE)
+    @Operation(summary = "角色测试", description = TEST_SpEL_ROLE)
     public String hasRole() {
         return TEST_SpEL_ROLE;
     }
 
     @GetMapping("/permission")
     @PreAuthorize(TEST_SpEL_PERMISSION)
-    @ApiOperation(value = "权限测试", notes = TEST_SpEL_PERMISSION)
+    @Operation(summary = "权限测试", description = TEST_SpEL_PERMISSION)
     public String hasPermission() {
         return TEST_SpEL_PERMISSION;
     }

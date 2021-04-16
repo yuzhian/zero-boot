@@ -12,17 +12,6 @@ import org.springframework.core.env.ConfigurableEnvironment;
 @Slf4j
 public class HelloApplicationRunListener implements SpringApplicationRunListener {
 
-    public HelloApplicationRunListener(SpringApplication application, String[] args) {
-    }
-
-    public void starting() {
-        if (log.isDebugEnabled()) log.debug("HelloApplicationRunListener.starting()");
-    }
-
-    public void environmentPrepared(ConfigurableEnvironment environment) {
-        if (log.isDebugEnabled()) log.debug("HelloApplicationRunListener.environmentPrepared()");
-    }
-
     public void contextPrepared(ConfigurableApplicationContext context) {
         if (log.isDebugEnabled()) log.debug("HelloApplicationRunListener.contextPrepared()");
     }

@@ -35,7 +35,7 @@
     <properties>
         <java.version>15</java.version>
         <druid.version>1.2.5</druid.version>
-        <springfox.version>3.0.0</springfox.version>
+        <springdoc.version>1.5.7</springdoc.version>
         <aliyun-sms.version>1.0.0</aliyun-sms.version>
         <wechat-starter.version>4.0.0</wechat-starter.version>
         <hanlp.version>portable-1.8.0</hanlp.version>
@@ -63,9 +63,9 @@
             <artifactId>spring-boot-starter-security</artifactId>
         </dependency>
         <dependency>
-            <groupId>io.springfox</groupId>
-            <artifactId>springfox-boot-starter</artifactId>
-            <version>${springfox.version}</version>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-ui</artifactId>
+            <version>${springdoc.version}</version>
         </dependency>
 
         <!-- db & jpa -->

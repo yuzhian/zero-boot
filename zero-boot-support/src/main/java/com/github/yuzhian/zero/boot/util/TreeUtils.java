@@ -2,8 +2,7 @@ package com.github.yuzhian.zero.boot.util;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -43,22 +42,23 @@ public class TreeUtils {
     @Getter
     @Setter
     @Builder
-    @ApiModel(value = "Node", description = "节点内容")
+    @Schema(title = "Node", description = "节点内容")
     @JsonInclude(JsonInclude.Include.NON_DEFAULT)
     public static class Node<T> {
-        @ApiModelProperty("标签内容")
+        @Schema(title = "标签内容")
         private String label;
 
-        @ApiModelProperty("标签取值")
+        @Schema(title = "标签取值")
         private String value;
 
         @JsonIgnore
+        @Schema(hidden = true)
         private String parent;
 
-        @ApiModelProperty("节点全部信息")
+        @Schema(title = "节点全部信息")
         private T entity;
 
-        @ApiModelProperty("子节点")
+        @Schema(title = "子节点")
         private List<Node<T>> children;
     }
 }

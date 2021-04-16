@@ -41,6 +41,16 @@
             <artifactId>zero-boot-wechat</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.github.yuzhian</groupId>
+            <artifactId>zero-boot-nlp</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.yuzhian</groupId>
+            <artifactId>zero-boot-pacs</artifactId>
+            <version>${project.version}</version>
+        </dependency>
     </dependencies>
 
     <build>

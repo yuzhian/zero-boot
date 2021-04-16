@@ -3,8 +3,8 @@ package com.github.yuzhian.zero.boot.wechat.controller;
 import com.github.yuzhian.zero.boot.exception.ApiException;
 import com.github.yuzhian.zero.boot.support.BaseController;
 import com.github.yuzhian.zero.boot.wechat.service.IMpService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.common.error.WxErrorException;
@@ -25,7 +25,7 @@ import java.util.Map;
  */
 @Slf4j
 @RestController
-@Api(tags = "微信公众平台控制器")
+@Tag(name = "MpController", description = "微信公众平台控制器")
 @RequiredArgsConstructor
 @RequestMapping(value = "/wechat/mp")
 public class MpController extends BaseController {
@@ -35,7 +35,7 @@ public class MpController extends BaseController {
 
     @Profile("dev")
     @GetMapping("/test")
-    @ApiOperation(value = "微信功能测试", notes = "测试微信SDK是否可以正常调用")
+    @Operation(summary = "微信功能测试", description = "测试微信SDK是否可以正常调用")
     public Map<String, String> test() throws WxErrorException {
         return Map.of(
                 "appId", wxMpService.getWxMpConfigStorage().getAppId(),
@@ -44,7 +44,7 @@ public class MpController extends BaseController {
     }
 
     @GetMapping(produces = MediaType.TEXT_PLAIN_VALUE)
-    @ApiOperation(value = "微信消息验证", notes = "供微信验证服务器资源")
+    @Operation(summary = "微信消息验证", description = "供微信验证服务器资源")
     public String echo(String timestamp, String nonce, String signature, @SuppressWarnings("SpellCheckingInspection") String echostr) {
         // TODO AOP
         // 验证消息签名, 判断是否为公众平台消息
@@ -55,7 +55,7 @@ public class MpController extends BaseController {
     }
 
     @PostMapping(produces = MediaType.APPLICATION_XML_VALUE)
-    @ApiOperation(value = "微信消息处理", notes = "微信消息处理")
+    @Operation(summary = "微信消息处理", description = "微信消息处理")
     public String handleMessage(String timestamp, String nonce, String signature,
                                 @RequestParam(value = "encrypt_type", defaultValue = "raw") String encryptType,
                                 @RequestParam(value = "msg_signature", required = false) String msgSignature,
@@ -77,7 +77,7 @@ public class MpController extends BaseController {
     }
 
     @GetMapping(value = "/userinfo/{openid}")
-    @ApiOperation(value = "微信用户资料", notes = "通过openid获取用户资料")
+    @Operation(summary = "微信用户资料", description = "通过openid获取用户资料")
     public WxMpUser userinfo(@PathVariable String openid) throws WxErrorException {
         return mpService.getUserInfo(openid, "zh_CN");
     }
