@@ -27,6 +27,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
@@ -79,13 +80,13 @@ public class HelloController extends BaseController {
     @Operation(summary = "security 登陆拦截测试")
     public Map<String, String> login(@RequestBody @Valid LoginDTO dto) {
         if (log.isInfoEnabled()) log.info("login dto: {}", dto);
-        return null;
+        return new HashMap<>();
     }
 
     @PostMapping("/logout")
     @Operation(summary = "security 注销拦截测试")
     public Map<String, String> logout() {
-        return null;
+        return new HashMap<>();
     }
 
     @GetMapping({"/expire", "/expire/{sessionId}"})

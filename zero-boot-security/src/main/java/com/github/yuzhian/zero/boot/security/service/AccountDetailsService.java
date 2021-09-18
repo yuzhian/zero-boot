@@ -14,6 +14,7 @@ import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * @author yuzhian
@@ -26,16 +27,16 @@ public class AccountDetailsService implements UserDetailsService, Serializable {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Account account = accountService.getAccount(username);
-        if (null == account) {
-            throw new UsernameNotFoundException("用户名不存在");
-        }
-        Set<String> authorities = new HashSet<>();
-        account.getRoles().forEach(role -> {
-            authorities.add("ROLE_" + role.getRole());
-            authorities.addAll(role.getPermissions().stream().map(Permission::getPermission).collect(Collectors.toSet()));
-        });
-        return User.builder().username(account.getUserId()).password(account.getPassword())
-                .authorities(authorities.toArray(String[]::new))
+        if (null == account) throw new UsernameNotFoundException("用户名不存在");
+
+        String[] authorities = Stream.concat(
+                account.getRoles().stream().flatMap(role -> role.getPermissions().stream()).map(Permission::getPermission),
+                account.getRoles().stream().map(role -> "ROLE_" + role.getRole())
+        ).distinct().toArray(String[]::new);
+        return User.builder()
+                .username(account.getUserId())
+                .password(account.getPassword())
+                .authorities(authorities)
                 .build();
     }
 }

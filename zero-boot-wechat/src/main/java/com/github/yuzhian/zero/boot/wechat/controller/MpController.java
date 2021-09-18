@@ -64,11 +64,7 @@ public class MpController extends BaseController {
             throw new ApiException(HttpStatus.BAD_REQUEST, "WECHAT_SIGNATURE_FAILED", "非法请求");
         }
 
-        WxMpXmlMessage request = switch (encryptType) {
-            case "raw" -> WxMpXmlMessage.fromXml(xml);
-            case "aes" -> WxMpXmlMessage.fromEncryptedXml(xml, wxMpService.getWxMpConfigStorage(), timestamp, nonce, msgSignature);
-            default -> throw new ApiException(HttpStatus.BAD_REQUEST, "ENCRYPT_TYPE_UNRECOGNIZED", "加密类型不可识别");
-        };
+        WxMpXmlMessage request = decryptXmlMessage(timestamp, nonce, encryptType, msgSignature, xml);
         if (log.isDebugEnabled()) log.debug("message encrypt type: {}, content：{} ", encryptType, request.toString());
 
         // 处理消息并返回
@@ -80,5 +76,16 @@ public class MpController extends BaseController {
     @Operation(summary = "微信用户资料", description = "通过openid获取用户资料")
     public WxMpUser userinfo(@PathVariable String openid) throws WxErrorException {
         return mpService.getUserInfo(openid, "zh_CN");
+    }
+
+    private WxMpXmlMessage decryptXmlMessage(String timestamp, String nonce, String encryptType, String msgSignature, String xml) {
+        switch (encryptType) {
+            case "raw":
+                return WxMpXmlMessage.fromXml(xml);
+            case "aes":
+                return WxMpXmlMessage.fromEncryptedXml(xml, wxMpService.getWxMpConfigStorage(), timestamp, nonce, msgSignature);
+            default:
+                throw new ApiException(HttpStatus.BAD_REQUEST, "ENCRYPT_TYPE_UNRECOGNIZED", "加密类型不可识别");
+        }
     }
 }

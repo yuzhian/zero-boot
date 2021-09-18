@@ -13,7 +13,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.session.SessionRegistry;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.session.ConcurrentSessionControlAuthenticationStrategy;
 import org.springframework.security.web.session.ConcurrentSessionFilter;
@@ -32,14 +31,14 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     private final RestfulAuthenticationSuccessHandler authenticationSuccessHandler;
     private final RestfulAuthenticationFailureHandler authenticationFailureHandler;
     private final RedisIndexedSessionRepository sessionRepository;
-    private SessionRegistry sessionRegistry;
+    private volatile SessionRegistry sessionRegistry;
 
     @Bean
     public SessionRegistry sessionRegistry() {
-        if (null == this.sessionRegistry) {
+        if (null == sessionRegistry) {
             synchronized (this) {
                 if (null == sessionRegistry) {
-                    this.sessionRegistry = new SpringSessionBackedSessionRegistry<>(sessionRepository);
+                    sessionRegistry = new SpringSessionBackedSessionRegistry<>(sessionRepository);
                 }
             }
         }
@@ -48,7 +47,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(accountDetailsService).passwordEncoder(new BCryptPasswordEncoder());
+        auth.userDetailsService(accountDetailsService);
     }
 
     @Override

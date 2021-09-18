@@ -5,7 +5,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
-import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -16,7 +15,6 @@ import java.io.Serializable;
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 @Schema(title = "错误信息", description = "错误信息响应体")
 public class ErrorEntity implements Serializable {
-    @Serial
     private static final long serialVersionUID = 1L;
 
     @Schema(title = "状态码")
