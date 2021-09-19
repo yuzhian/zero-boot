@@ -49,14 +49,14 @@ public class HelloController extends BaseController {
     private final SessionRegistry sessionRegistry;
     private final IAccountService accountService;
 
-    @GetMapping(value = "/jpa/{account}")
+    @GetMapping(value = "/hello/jpa/{account}")
     @Operation(summary = "jpa 测试", description = "账号获取用户信息")
     public Account saveRedis(@PathVariable @NotEmpty(message = "查询账号不可空") String account) {
         return accountService.getAccount(account);
     }
 
     @Operation(summary = "redis 测试")
-    @PostMapping(value = "/redis/{key}")
+    @PostMapping(value = "/hello/redis/{key}")
     public ResponseEntity<Object> testRedis(@PathVariable @NotEmpty(message = "key不可为空") String key,
                                             @RequestBody @NotEmpty(message = "val不可为空") Map<String, Object> val) {
         ValueOperations<String, Object> ops = redisTemplate.opsForValue();
@@ -65,12 +65,12 @@ public class HelloController extends BaseController {
     }
 
     @Operation(summary = "异常处理测试")
-    @GetMapping(value = "/exception")
+    @GetMapping(value = "/hello/exception")
     public ResponseEntity<Void> testExceptionHandle() {
         throw new ApiException(HttpStatus.NOT_FOUND, "DEMO", "测试异常");
     }
 
-    @GetMapping("/bean")
+    @GetMapping("/hello/bean")
     @Operation(summary = "工具类获取Bean")
     public OpenApiProperties bean() {
         return ApplicationContextHolder.getBean(OpenApiProperties.class);
@@ -89,7 +89,7 @@ public class HelloController extends BaseController {
         return new HashMap<>();
     }
 
-    @GetMapping({"/expire", "/expire/{sessionId}"})
+    @GetMapping({"/hello/expire", "/expire/{sessionId}"})
     @Operation(summary = "主动过期session")
     public ResponseEntity<Void> expire(@PathVariable(required = false) String sessionId, HttpServletRequest request) {
         if (!StringUtils.hasText(sessionId)) {
@@ -103,7 +103,7 @@ public class HelloController extends BaseController {
         return ResponseEntity.status(sessionInformation.isExpired() ? HttpStatus.OK : HttpStatus.INTERNAL_SERVER_ERROR).build();
     }
 
-    @GetMapping("/userinfo")
+    @GetMapping("/hello/userinfo")
     @PreAuthorize("isFullyAuthenticated()")
     @Operation(summary = "security 获取用户信息")
     public Authentication userinfo() {
@@ -111,14 +111,14 @@ public class HelloController extends BaseController {
         return super.userinfo();
     }
 
-    @GetMapping("/role")
+    @GetMapping("/hello/role")
     @PreAuthorize(TEST_SpEL_ROLE)
     @Operation(summary = "角色测试", description = TEST_SpEL_ROLE)
     public String hasRole() {
         return TEST_SpEL_ROLE;
     }
 
-    @GetMapping("/permission")
+    @GetMapping("/hello/permission")
     @PreAuthorize(TEST_SpEL_PERMISSION)
     @Operation(summary = "权限测试", description = TEST_SpEL_PERMISSION)
     public String hasPermission() {

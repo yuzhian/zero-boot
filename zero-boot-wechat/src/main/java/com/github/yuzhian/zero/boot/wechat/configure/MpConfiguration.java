@@ -4,6 +4,7 @@ import com.github.yuzhian.zero.boot.wechat.handler.LogHandler;
 import com.github.yuzhian.zero.boot.wechat.handler.MsgHandler;
 import com.github.yuzhian.zero.boot.wechat.handler.SubscribeHandler;
 import me.chanjar.weixin.common.api.WxConsts;
+import me.chanjar.weixin.common.api.WxMessageInMemoryDuplicateChecker;
 import me.chanjar.weixin.mp.api.WxMpMessageRouter;
 import me.chanjar.weixin.mp.api.WxMpService;
 import org.springframework.context.annotation.Bean;
@@ -21,11 +22,12 @@ public class MpConfiguration {
             MsgHandler msgHandler,
             SubscribeHandler subscribeHandler
     ) {
-        final WxMpMessageRouter router = new WxMpMessageRouter(wxMpService);
-        router.rule().handler(logHandler).next();                                                           // 所有 -> 日志, 异步
-        router.rule().async(false).msgType(WxConsts.XmlMsgType.EVENT).event(WxConsts.EventType.SUBSCRIBE)   // 关注
-                .handler(subscribeHandler).end();
-        router.rule().async(false).handler(msgHandler).end();                                               // 默认, 转发消息给客服人员
-        return router;
+        WxMpMessageRouter router = new WxMpMessageRouter(wxMpService);
+        router.setMessageDuplicateChecker(new WxMessageInMemoryDuplicateChecker());
+        return router
+                .rule().handler(logHandler).next()
+                .rule().async(false).msgType(WxConsts.XmlMsgType.EVENT).event(WxConsts.EventType.SUBSCRIBE).handler(subscribeHandler).end()
+                .rule().async(false).handler(msgHandler).end()
+                ;
     }
 }

@@ -1,6 +1,5 @@
 package com.github.yuzhian.zero.boot.wechat.handler;
 
-import com.github.yuzhian.zero.boot.wechat.service.IMpService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.common.error.WxErrorException;
@@ -21,17 +20,10 @@ import java.util.Map;
 @Component
 @RequiredArgsConstructor
 public class SubscribeHandler implements WxMpMessageHandler {
-    private final IMpService mpService;
-
     @Override
     public WxMpXmlOutMessage handle(WxMpXmlMessage wxMessage, Map<String, Object> context,
-                                    WxMpService wxMpService, WxSessionManager sessionManager)  {
-        WxMpUser wxMpUser = null;
-        try {
-            wxMpUser = mpService.getUserInfo(wxMessage.getFromUser(), "zh_CN");
-        } catch (WxErrorException e) {
-            if (log.isErrorEnabled()) log.error(e.getError().toString());
-        }
+                                    WxMpService wxMpService, WxSessionManager sessionManager) throws WxErrorException {
+        WxMpUser wxMpUser = wxMpService.getUserService().userInfo(wxMessage.getFromUser(), "zh_CN");
 
         // TODO 用户关注时的业务操作
 
